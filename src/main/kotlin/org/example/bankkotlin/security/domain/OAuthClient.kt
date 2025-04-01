@@ -1,4 +1,4 @@
-package org.example.bankkotlin.security.infrastructure
+package org.example.bankkotlin.security.domain
 
 import org.example.bankkotlin.security.infrastructure.response.OAuth2TokenResponse
 import org.example.bankkotlin.security.infrastructure.response.OAuth2UserResponse
