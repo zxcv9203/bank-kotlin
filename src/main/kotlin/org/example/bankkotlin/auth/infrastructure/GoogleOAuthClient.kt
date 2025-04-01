@@ -4,6 +4,8 @@ import org.example.bankkotlin.auth.domain.OAuthClient
 import org.example.bankkotlin.auth.infrastructure.config.OAuth2Config
 import org.example.bankkotlin.auth.infrastructure.response.OAuth2TokenResponse
 import org.example.bankkotlin.auth.infrastructure.response.OAuth2UserResponse
+import org.example.bankkotlin.common.exception.CustomException
+import org.example.bankkotlin.common.exception.ErrorCode
 import org.springframework.stereotype.Component
 
 @Component(GoogleOAuthClient.CLIENT_ID)
@@ -12,7 +14,7 @@ class GoogleOAuthClient(
 ) : OAuthClient {
 
     private val oAuthInfo = config.providers[CLIENT_ID]
-        ?: throw IllegalArgumentException("OAuth2 provider not found: $CLIENT_ID")
+        ?: throw CustomException(ErrorCode.AUTH_CONFIG_NOT_FOUND, CLIENT_ID)
     override val providerName: String
         get() = CLIENT_ID
 
