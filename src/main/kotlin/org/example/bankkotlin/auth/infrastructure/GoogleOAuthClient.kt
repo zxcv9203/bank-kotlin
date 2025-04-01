@@ -1,9 +1,9 @@
-package org.example.bankkotlin.security.infrastructure
+package org.example.bankkotlin.auth.infrastructure
 
-import org.example.bankkotlin.security.domain.OAuthClient
-import org.example.bankkotlin.security.infrastructure.config.OAuth2Config
-import org.example.bankkotlin.security.infrastructure.response.OAuth2TokenResponse
-import org.example.bankkotlin.security.infrastructure.response.OAuth2UserResponse
+import org.example.bankkotlin.auth.domain.OAuthClient
+import org.example.bankkotlin.auth.infrastructure.config.OAuth2Config
+import org.example.bankkotlin.auth.infrastructure.response.OAuth2TokenResponse
+import org.example.bankkotlin.auth.infrastructure.response.OAuth2UserResponse
 import org.springframework.stereotype.Component
 
 @Component(GoogleOAuthClient.CLIENT_ID)
