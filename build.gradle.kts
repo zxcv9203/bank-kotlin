@@ -20,6 +20,7 @@ repositories {
 }
 
 dependencies {
+    implementation("com.auth0:java-jwt:3.12.0")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
