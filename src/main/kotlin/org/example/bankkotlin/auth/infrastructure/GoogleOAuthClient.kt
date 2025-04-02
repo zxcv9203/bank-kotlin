@@ -1,16 +1,20 @@
 package org.example.bankkotlin.auth.infrastructure
 
+import okhttp3.FormBody
 import org.example.bankkotlin.auth.domain.OAuthClient
+import org.example.bankkotlin.auth.infrastructure.GithubOAuthClient.Companion
 import org.example.bankkotlin.auth.infrastructure.config.OAuth2Config
 import org.example.bankkotlin.auth.infrastructure.response.OAuth2TokenResponse
 import org.example.bankkotlin.auth.infrastructure.response.OAuth2UserResponse
+import org.example.bankkotlin.common.client.HttpClient
 import org.example.bankkotlin.common.exception.CustomException
 import org.example.bankkotlin.common.exception.ErrorCode
 import org.springframework.stereotype.Component
 
 @Component(GoogleOAuthClient.CLIENT_ID)
 class GoogleOAuthClient(
-    private val config: OAuth2Config
+    private val config: OAuth2Config,
+    private val httpClient: HttpClient,
 ) : OAuthClient {
 
     private val oAuthInfo = config.providers[CLIENT_ID]
@@ -19,7 +23,19 @@ class GoogleOAuthClient(
         get() = CLIENT_ID
 
     override fun getToken(code: String): OAuth2TokenResponse {
-        TODO("Not yet implemented")
+        val body = FormBody.Builder()
+            .add("code", code)
+            .add("client_id", oAuthInfo.clientId)
+            .add("client_secret", oAuthInfo.clientSecret)
+            .add("redirect_uri", oAuthInfo.redirectUri)
+            .add("grant_type", "authorization_code")
+            .build()
+
+        val headers = mapOf("Accept" to "application/json")
+
+        val jsonString = httpClient.POST(GithubOAuthClient.TOKEN_URL, headers, body)
+
+        // json 처리
     }
 
     override fun getUserInfo(accessToken: String): OAuth2UserResponse {
@@ -28,5 +44,7 @@ class GoogleOAuthClient(
 
     companion object {
         const val CLIENT_ID = "google"
+        const val TOKEN_URL = "https://oauth2.googleapis.com/token"
+        const val USER_INFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo"
     }
 }
