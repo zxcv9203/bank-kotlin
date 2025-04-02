@@ -2,13 +2,15 @@ package org.example.bankkotlin.auth.infrastructure
 
 import okhttp3.FormBody
 import org.example.bankkotlin.auth.domain.OAuthClient
-import org.example.bankkotlin.auth.infrastructure.GithubOAuthClient.Companion
 import org.example.bankkotlin.auth.infrastructure.config.OAuth2Config
+import org.example.bankkotlin.auth.infrastructure.response.GoogleOAuth2TokenResponse
+import org.example.bankkotlin.auth.infrastructure.response.GoogleOAuth2UserResponse
 import org.example.bankkotlin.auth.infrastructure.response.OAuth2TokenResponse
 import org.example.bankkotlin.auth.infrastructure.response.OAuth2UserResponse
 import org.example.bankkotlin.common.client.HttpClient
 import org.example.bankkotlin.common.exception.CustomException
 import org.example.bankkotlin.common.exception.ErrorCode
+import org.example.bankkotlin.common.util.JsonUtils
 import org.springframework.stereotype.Component
 
 @Component(GoogleOAuthClient.CLIENT_ID)
@@ -33,13 +35,22 @@ class GoogleOAuthClient(
 
         val headers = mapOf("Accept" to "application/json")
 
-        val jsonString = httpClient.POST(GithubOAuthClient.TOKEN_URL, headers, body)
+        val jsonString = httpClient.POST(TOKEN_URL, headers, body)
 
-        // json 처리
+        val response = JsonUtils.decodeFromJson(jsonString, GoogleOAuth2TokenResponse.serializer())
+
+        return response
     }
 
     override fun getUserInfo(accessToken: String): OAuth2UserResponse {
-        TODO("Not yet implemented")
+        val headers = mapOf(
+            "Content-Type" to "application/json",
+            "Authorization" to "Bearer $accessToken",
+        )
+
+        val jsonString = httpClient.GET(TOKEN_URL, headers)
+        val response = JsonUtils.decodeFromJson(jsonString, GoogleOAuth2UserResponse.serializer())
+        return response
     }
 
     companion object {
