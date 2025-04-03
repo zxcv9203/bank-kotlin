@@ -1,4 +1,4 @@
-package org.example.bankkotlin.common.logging
+package org.example.bankkotlin.common.util
 
 import org.example.bankkotlin.common.exception.CustomException
 import org.example.bankkotlin.common.exception.ErrorCode

@@ -2,7 +2,7 @@ package org.example.bankkotlin.auth.domain
 
 import org.example.bankkotlin.common.exception.CustomException
 import org.example.bankkotlin.common.exception.ErrorCode
-import org.example.bankkotlin.common.logging.Logging
+import org.example.bankkotlin.common.util.Logging
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
