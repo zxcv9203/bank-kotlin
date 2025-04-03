@@ -33,7 +33,10 @@ class GoogleOAuthClient(
             .add("grant_type", "authorization_code")
             .build()
 
-        val headers = mapOf("Accept" to "application/json")
+        val headers = mapOf(
+            "Accept" to "application/json",
+            "Content-Type" to "application/x-www-form-urlencoded"
+        )
 
         val jsonString = httpClient.POST(TOKEN_URL, headers, body)
 
@@ -48,7 +51,7 @@ class GoogleOAuthClient(
             "Authorization" to "Bearer $accessToken",
         )
 
-        val jsonString = httpClient.GET(TOKEN_URL, headers)
+        val jsonString = httpClient.GET(USER_INFO_URL, headers)
         val response = JsonUtils.decodeFromJson(jsonString, GoogleOAuth2UserResponse.serializer())
         return response
     }

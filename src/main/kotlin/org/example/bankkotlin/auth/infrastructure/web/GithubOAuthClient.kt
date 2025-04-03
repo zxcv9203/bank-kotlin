@@ -49,7 +49,7 @@ class GithubOAuthClient(
             "Authorization" to "Bearer $accessToken",
         )
 
-        val jsonString = httpClient.GET(TOKEN_URL, headers)
+        val jsonString = httpClient.GET(USER_INFO_URL, headers)
         val response = JsonUtils.decodeFromJson(jsonString, GithubOAuth2UserClientResponse.serializer())
         return response.toOAuth2UserResponse()
     }

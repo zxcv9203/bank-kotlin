@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 @Table(name = "user")
 class User(
     @Id
-    @Column(name = "ulid", length = 12, nullable = false)
+    @Column(name = "ulid", length = 50, nullable = false)
     val ulid: String,
 
     @OneToMany(mappedBy = "user")
