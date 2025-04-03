@@ -14,9 +14,6 @@ class User(
     @OneToMany(mappedBy = "user")
     val accounts: List<Account> = mutableListOf(),
 
-    @Column(name = "platform", nullable = false, length = 25)
-    val platform: String,
-
     @Column(name = "username", nullable = false, unique = true, length = 50)
     val username: String,
 
