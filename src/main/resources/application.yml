@@ -1,0 +1,31 @@
+jwt:
+  secret-key: "lecture"
+  time: 30
+
+oauth2:
+  providers:
+    google:
+      client-id: ${GOOGLE_CLIENT_ID}
+      client-secret: ${GOOGLE_CLIENT_SECRET}
+      redirect-uri: ${GOOGLE_REDIRECT_URI}
+    github:
+      client-id: ${GITHUB_CLIENT_ID}
+      client-secret: ${GITHUB_CLIENT_SECRET}
+      redirect-uri: ${GITHUB_REDIRECT_URI}
+
+database:
+  mysql:
+    url: jdbc:mysql://localhost:3306/bank?serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+spring:
+  config:
+    import: secret.properties
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
