@@ -1,4 +1,4 @@
-package org.example.bankkotlin.auth.infrastructure.response
+package org.example.bankkotlin.auth.infrastructure.web.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -1,6 +1,6 @@
-package org.example.bankkotlin.auth.infrastructure.config
+package org.example.bankkotlin.auth.infrastructure.web.config
 
-import org.example.bankkotlin.auth.infrastructure.model.OAuthProvider
+import org.example.bankkotlin.auth.infrastructure.web.model.OAuthProvider
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration
 

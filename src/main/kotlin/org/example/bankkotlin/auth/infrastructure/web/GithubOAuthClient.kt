@@ -1,26 +1,27 @@
-package org.example.bankkotlin.auth.infrastructure
+package org.example.bankkotlin.auth.infrastructure.web
 
 import okhttp3.FormBody
 import org.example.bankkotlin.auth.domain.OAuthClient
-import org.example.bankkotlin.auth.infrastructure.config.OAuth2Config
-import org.example.bankkotlin.auth.infrastructure.response.GoogleOAuth2TokenResponse
-import org.example.bankkotlin.auth.infrastructure.response.GoogleOAuth2UserResponse
-import org.example.bankkotlin.auth.infrastructure.response.OAuth2TokenResponse
-import org.example.bankkotlin.auth.infrastructure.response.OAuth2UserResponse
+import org.example.bankkotlin.auth.infrastructure.web.config.OAuth2Config
+import org.example.bankkotlin.auth.infrastructure.web.response.GithubOAuth2TokenResponse
+import org.example.bankkotlin.auth.infrastructure.web.response.GithubOAuth2UserClientResponse
+import org.example.bankkotlin.auth.infrastructure.web.response.OAuth2TokenResponse
+import org.example.bankkotlin.auth.infrastructure.web.response.OAuth2UserResponse
 import org.example.bankkotlin.common.client.HttpClient
 import org.example.bankkotlin.common.exception.CustomException
 import org.example.bankkotlin.common.exception.ErrorCode
 import org.example.bankkotlin.common.util.JsonUtils
 import org.springframework.stereotype.Component
 
-@Component(GoogleOAuthClient.CLIENT_ID)
-class GoogleOAuthClient(
+@Component(GithubOAuthClient.CLIENT_ID)
+class GithubOAuthClient(
     private val config: OAuth2Config,
     private val httpClient: HttpClient,
 ) : OAuthClient {
 
     private val oAuthInfo = config.providers[CLIENT_ID]
-        ?: throw CustomException(ErrorCode.AUTH_CONFIG_NOT_FOUND, CLIENT_ID)
+        ?: throw CustomException(ErrorCode.AUTH_CONFIG_NOT_FOUND, GoogleOAuthClient.CLIENT_ID)
+
     override val providerName: String
         get() = CLIENT_ID
 
@@ -37,7 +38,7 @@ class GoogleOAuthClient(
 
         val jsonString = httpClient.POST(TOKEN_URL, headers, body)
 
-        val response = JsonUtils.decodeFromJson(jsonString, GoogleOAuth2TokenResponse.serializer())
+        val response = JsonUtils.decodeFromJson(jsonString, GithubOAuth2TokenResponse.serializer())
 
         return response
     }
@@ -49,13 +50,13 @@ class GoogleOAuthClient(
         )
 
         val jsonString = httpClient.GET(TOKEN_URL, headers)
-        val response = JsonUtils.decodeFromJson(jsonString, GoogleOAuth2UserResponse.serializer())
-        return response
+        val response = JsonUtils.decodeFromJson(jsonString, GithubOAuth2UserClientResponse.serializer())
+        return response.toOAuth2UserResponse()
     }
 
     companion object {
-        const val CLIENT_ID = "google"
-        const val TOKEN_URL = "https://oauth2.googleapis.com/token"
-        const val USER_INFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo"
+        const val CLIENT_ID = "github"
+        const val TOKEN_URL = "https://github.com/login/oauth/access_token"
+        const val USER_INFO_URL = "https://api.github.com/user"
     }
 }

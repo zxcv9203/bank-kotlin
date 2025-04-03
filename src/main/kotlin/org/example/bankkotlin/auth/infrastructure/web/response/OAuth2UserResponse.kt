@@ -1,4 +1,4 @@
-package org.example.bankkotlin.auth.infrastructure.response
+package org.example.bankkotlin.auth.infrastructure.web.response
 
 interface OAuth2UserResponse {
     val id: String

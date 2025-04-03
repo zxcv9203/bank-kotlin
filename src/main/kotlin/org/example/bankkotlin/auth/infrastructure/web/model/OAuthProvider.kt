@@ -1,4 +1,4 @@
-package org.example.bankkotlin.auth.infrastructure.model
+package org.example.bankkotlin.auth.infrastructure.web.model
 
 data class OAuthProvider(
     val clientId: String,
