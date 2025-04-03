@@ -3,6 +3,7 @@ package org.example.bankkotlin.auth.domain
 import org.example.bankkotlin.common.exception.CustomException
 import org.example.bankkotlin.common.exception.ErrorCode
 import org.example.bankkotlin.common.util.Logging
+import org.example.bankkotlin.common.util.Transactional
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service
 class AuthService(
     private val oAuth2Clients: Map<String, OAuthClient>,
     private val jwtProvider: JwtProvider,
+    private val transactional: Transactional,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AuthService::class.java)
 
