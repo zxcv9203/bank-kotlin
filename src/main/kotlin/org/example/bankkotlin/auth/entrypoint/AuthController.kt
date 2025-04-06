@@ -1,4 +1,4 @@
-package org.example.bankkotlin.auth.api
+package org.example.bankkotlin.auth.entrypoint
 
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
