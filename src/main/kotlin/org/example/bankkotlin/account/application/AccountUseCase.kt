@@ -26,11 +26,11 @@ class AccountUseCase(
         transactional.run {
             val user = userService.getByUlid(ulid)
 
-            val ulid = UlidCreator.getUlid().toString()
+            val accountUlid = UlidCreator.getUlid().toString()
             val accountNumber = generateRandomAccountNumber()
 
             val account = Account(
-                ulid = ulid,
+                ulid = accountUlid,
                 accountNumber = accountNumber,
                 user = user,
             )
