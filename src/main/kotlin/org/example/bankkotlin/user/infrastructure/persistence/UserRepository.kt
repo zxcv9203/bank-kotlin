@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query
 interface UserRepository : JpaRepository<User, String> {
     fun existsByUsername(username: String): Boolean
 
+    fun findByUlid(ulid: String): User?
+
     @Modifying
     @Query("UPDATE User u SET u.accessToken = :accessToken WHERE u.username = :username")
     fun updateAccessTokenByUsername(username: String, accessToken: String)

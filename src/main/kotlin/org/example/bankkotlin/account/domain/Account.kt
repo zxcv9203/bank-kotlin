@@ -23,11 +23,20 @@ class Account(
     val accountNumber: String,
 
     @Column(name = "is_deleted", nullable = false)
-    val isDeleted: Boolean = false,
+    var isDeleted: Boolean = false,
 
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "updated_at", nullable = false)
     var updatedAt: LocalDateTime = LocalDateTime.now(),
-)
+
+    @Column(name = "deleted_at")
+    var deletedAt: LocalDateTime? = null,
+) {
+    fun delete() {
+        this.isDeleted = true
+        this.updatedAt = LocalDateTime.now()
+        this.deletedAt = LocalDateTime.now()
+    }
+}
