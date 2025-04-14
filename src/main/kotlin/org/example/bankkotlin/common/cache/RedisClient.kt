@@ -4,8 +4,10 @@ import org.example.bankkotlin.common.exception.CustomException
 import org.example.bankkotlin.common.exception.ErrorCode
 import org.redisson.api.RedissonClient
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
 
+@Component
 class RedisClient(
     private val template: RedisTemplate<String, String>,
     private val redissonClient: RedissonClient
