@@ -1,5 +1,6 @@
 package org.example.bankkotlin.account.application
 
+import org.example.bankkotlin.account.application.model.TransferResult
 import org.example.bankkotlin.account.domain.AccountService
 import org.example.bankkotlin.common.cache.RedisClient
 import org.example.bankkotlin.common.cache.RedisKeyProvider
@@ -34,4 +35,41 @@ class AccountTransactionUseCase(
             }
         }
     }
+
+    fun transfer(fromUlid: String, fromAccountId: String, toAccountId: String, value: BigDecimal): TransferResult =
+        Logging.logFor(log) {
+            it["fromUlid"] = fromUlid
+            it["fromAccountId"] = fromAccountId
+            it["toAccountId"] = toAccountId
+            it["value"] = value
+
+            val key = RedisKeyProvider.bankMetuxKey(fromUlid, fromAccountId)
+
+            return@logFor redisClient.invokeWithMutex(key) {
+                return@invokeWithMutex transactional.run {
+                    val fromAccount = accountService.getByUlid(fromAccountId)
+
+
+                    if (fromAccount.user.ulid != fromUlid) {
+
+                    } else if (fromAccount.balance < value) {
+
+                    } else if (value <= BigDecimal.ZERO) {
+
+                    }
+                    val toAccount = accountService.getByUlid(toAccountId)
+
+                    fromAccount.balance = fromAccount.balance.subtract(value)
+                    toAccount.balance = toAccount.balance.add(value)
+
+                    accountService.save(toAccount)
+                    accountService.save(fromAccount)
+
+                    return@run TransferResult(
+                        toAccountBalance = toAccount.balance,
+                        fromAccountBalance = fromAccount.balance
+                    )
+                }
+            }
+        }
 }
