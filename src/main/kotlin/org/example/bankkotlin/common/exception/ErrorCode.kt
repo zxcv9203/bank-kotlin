@@ -18,4 +18,6 @@ enum class ErrorCode(
     ACCOUNT_BALANCE_IS_NOT_ZERO(-111, "account balance is not zero"),
     FAILED_TO_MUTEX_INVOKE(-112, "failed to mutex invoke"),
     FAILED_TO_GET_LOCK(-113, "failed to get lock"),
+    ENOUGH_BALANCE(-114, "not enough balance"),
+    VALUE_MUST_BE_POSITIVE(-115, "value must be positive"),
 }

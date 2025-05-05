@@ -4,6 +4,8 @@ import org.example.bankkotlin.account.application.model.TransferResult
 import org.example.bankkotlin.account.domain.AccountService
 import org.example.bankkotlin.common.cache.RedisClient
 import org.example.bankkotlin.common.cache.RedisKeyProvider
+import org.example.bankkotlin.common.exception.CustomException
+import org.example.bankkotlin.common.exception.ErrorCode
 import org.example.bankkotlin.common.util.Logging
 import org.example.bankkotlin.common.util.Transactional
 import org.example.bankkotlin.user.domain.UserService
@@ -51,11 +53,20 @@ class AccountTransactionUseCase(
 
 
                     if (fromAccount.user.ulid != fromUlid) {
-
+                        throw CustomException(
+                            ErrorCode.MISS_MATCH_ACCOUNT_ULID_AND_USER_ULID,
+                            "input : $fromUlid, db : ${fromAccount.user.ulid}"
+                        )
                     } else if (fromAccount.balance < value) {
-
+                        throw CustomException(
+                            ErrorCode.ENOUGH_BALANCE,
+                            "input : $value, db : ${fromAccount.balance}"
+                        )
                     } else if (value <= BigDecimal.ZERO) {
-
+                        throw CustomException(
+                            ErrorCode.VALUE_MUST_BE_POSITIVE,
+                            "input : $value, db : ${fromAccount.balance}"
+                        )
                     }
                     val toAccount = accountService.getByUlid(toAccountId)
 
