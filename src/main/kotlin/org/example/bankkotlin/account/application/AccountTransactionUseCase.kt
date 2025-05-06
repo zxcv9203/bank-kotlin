@@ -1,11 +1,14 @@
 package org.example.bankkotlin.account.application
 
+import org.example.bankkotlin.account.application.model.TransactionMessage
 import org.example.bankkotlin.account.application.model.TransferResult
 import org.example.bankkotlin.account.domain.AccountService
 import org.example.bankkotlin.common.cache.RedisClient
 import org.example.bankkotlin.common.cache.RedisKeyProvider
 import org.example.bankkotlin.common.exception.CustomException
 import org.example.bankkotlin.common.exception.ErrorCode
+import org.example.bankkotlin.common.producer.KafkaProducer
+import org.example.bankkotlin.common.util.JsonUtils
 import org.example.bankkotlin.common.util.Logging
 import org.example.bankkotlin.common.util.Transactional
 import org.example.bankkotlin.user.domain.UserService
@@ -18,6 +21,7 @@ class AccountTransactionUseCase(
     private val accountService: AccountService,
     private val redisClient: RedisClient,
     private val transactional: Transactional,
+    private val kafkaProducer: KafkaProducer,
 ) {
     private val log = Logging.getLogger(AccountTransactionUseCase::class.java)
 
@@ -28,12 +32,26 @@ class AccountTransactionUseCase(
 
         val key = RedisKeyProvider.bankMetuxKey(userUlid, accountId)
 
-        redisClient.invokeWithMutex(key) {
-            return@invokeWithMutex transactional.run {
+        return@logFor redisClient.invokeWithMutex(key) {
+            transactional.run {
                 val user = userService.getByUlid(userUlid)
                 val account = accountService.getByUlidAndUser(accountId, user)
                 account.balance = account.balance.add(value)
-                accountService.save(account)
+                val updatedAccount = accountService.save(account)
+
+                val message = JsonUtils.encodeToJson(
+                    TransactionMessage(
+                        fromUlid = "0x0",
+                        fromName = "0x0",
+                        fromAccountId = "0x0",
+                        toUlid = user.ulid,
+                        toName = user.username,
+                        toAccountId = accountId,
+                        amount = value
+                    ), TransactionMessage.serializer()
+                )
+                kafkaProducer.sendMessage("", message)
+                return@run updatedAccount
             }
         }
     }
@@ -50,7 +68,6 @@ class AccountTransactionUseCase(
             return@logFor redisClient.invokeWithMutex(key) {
                 return@invokeWithMutex transactional.run {
                     val fromAccount = accountService.getByUlid(fromAccountId)
-
 
                     if (fromAccount.user.ulid != fromUlid) {
                         throw CustomException(
