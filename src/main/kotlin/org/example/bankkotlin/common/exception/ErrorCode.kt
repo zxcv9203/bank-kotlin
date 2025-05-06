@@ -20,4 +20,5 @@ enum class ErrorCode(
     FAILED_TO_GET_LOCK(-113, "failed to get lock"),
     ENOUGH_BALANCE(-114, "not enough balance"),
     VALUE_MUST_BE_POSITIVE(-115, "value must be positive"),
+    FAILED_TO_SEND_MESSAGE(-116, "failed to send message"),
 }
