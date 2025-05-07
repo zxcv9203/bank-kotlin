@@ -8,6 +8,7 @@ import org.example.bankkotlin.common.cache.RedisKeyProvider
 import org.example.bankkotlin.common.exception.CustomException
 import org.example.bankkotlin.common.exception.ErrorCode
 import org.example.bankkotlin.common.producer.KafkaProducer
+import org.example.bankkotlin.common.producer.KafkaTopic
 import org.example.bankkotlin.common.util.JsonUtils
 import org.example.bankkotlin.common.util.Logging
 import org.example.bankkotlin.common.util.Transactional
@@ -50,7 +51,7 @@ class AccountTransactionUseCase(
                         amount = value
                     ), TransactionMessage.serializer()
                 )
-                kafkaProducer.sendMessage("", message)
+                kafkaProducer.sendMessage(KafkaTopic.TRANSACTION.topic, message)
                 return@run updatedAccount
             }
         }
@@ -92,7 +93,18 @@ class AccountTransactionUseCase(
 
                     accountService.save(toAccount)
                     accountService.save(fromAccount)
-
+                    val message = JsonUtils.encodeToJson(
+                        TransactionMessage(
+                            fromUlid = fromUlid,
+                            fromName = fromAccount.user.username,
+                            fromAccountId = fromAccountId,
+                            toUlid = toAccount.user.ulid,
+                            toName = toAccount.user.username,
+                            toAccountId = toAccountId,
+                            amount = value
+                        ), TransactionMessage.serializer()
+                    )
+                    kafkaProducer.sendMessage(KafkaTopic.TRANSACTION.topic, message)
                     return@run TransferResult(
                         toAccountBalance = toAccount.balance,
                         fromAccountBalance = fromAccount.balance
