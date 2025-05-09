@@ -21,4 +21,5 @@ enum class ErrorCode(
     ENOUGH_BALANCE(-114, "not enough balance"),
     VALUE_MUST_BE_POSITIVE(-115, "value must be positive"),
     FAILED_TO_SEND_MESSAGE(-116, "failed to send message"),
+    FAILED_TO_CONNECT_MONGODB(-117, "failed to connect mongodb"),
 }
