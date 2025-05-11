@@ -22,4 +22,5 @@ enum class ErrorCode(
     VALUE_MUST_BE_POSITIVE(-115, "value must be positive"),
     FAILED_TO_SEND_MESSAGE(-116, "failed to send message"),
     FAILED_TO_CONNECT_MONGODB(-117, "failed to connect mongodb"),
+    MONGO_TEMPLATE_NOT_FOUND(-118, "mongo template not found"),
 }
