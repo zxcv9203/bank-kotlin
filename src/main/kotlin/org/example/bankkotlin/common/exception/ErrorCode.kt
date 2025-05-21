@@ -23,4 +23,6 @@ enum class ErrorCode(
     FAILED_TO_SEND_MESSAGE(-116, "failed to send message"),
     FAILED_TO_CONNECT_MONGODB(-117, "failed to connect mongodb"),
     MONGO_TEMPLATE_NOT_FOUND(-118, "mongo template not found"),
+    ACCESS_TOKEN_NEED(-119, "access token need"),
+
 }
