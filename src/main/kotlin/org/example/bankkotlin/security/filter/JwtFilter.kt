@@ -76,7 +76,7 @@ class JwtFilter(
         private val JWT_AUTH_ENDPOINT = arrayOf(
             "/api/v1/users/**",
             "/api/v1/transactions/**",
-            "api/v1/histories/**",
+            "/api/v1/histories/**",
         )
     }
 }

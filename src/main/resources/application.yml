@@ -29,6 +29,8 @@ database:
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+  mongo:
+    uri: ${MONGO_URI}
 spring:
   config:
     import: secret.properties
