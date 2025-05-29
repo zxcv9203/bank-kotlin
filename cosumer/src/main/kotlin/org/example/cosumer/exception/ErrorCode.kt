@@ -24,4 +24,5 @@ enum class ErrorCode(
     FAILED_TO_CONNECT_MONGODB(-117, "failed to connect mongodb"),
     MONGO_TEMPLATE_NOT_FOUND(-118, "mongo template not found"),
     ACCESS_TOKEN_NEED(-119, "access token need"),
+    FAILED_TO_FIND_TOPIC_HANDLER(-120, "failed to find topic handler"),
 }

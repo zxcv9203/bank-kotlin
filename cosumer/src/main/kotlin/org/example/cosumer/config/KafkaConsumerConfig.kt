@@ -2,7 +2,10 @@ package org.example.cosumer.config
 
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
+import org.example.cosumer.consumer.handler.BankTransactionHandler
 import org.example.cosumer.entrypoint.Handler
+import org.example.cosumer.exception.CustomException
+import org.example.cosumer.exception.ErrorCode
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
@@ -16,6 +19,7 @@ import org.springframework.kafka.listener.ContainerProperties
 @Configuration
 @EnableKafka
 class KafkaConsumerConfig(
+    private val bankTransactionHandler: BankTransactionHandler,
     private val topicConfig: TopicConfig,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(KafkaConsumerConfig::class.java)
@@ -47,6 +51,25 @@ class KafkaConsumerConfig(
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
 
         return props
+    }
+
+    @Bean(name = ["factoryHandlerMapper"])
+    fun factoryHandlerMapper(): Map<String, ConcurrentKafkaListenerContainerFactory<String, Any>> {
+        val factoryMap = HashMap<String, ConcurrentKafkaListenerContainerFactory<String, Any>>()
+
+        topicConfig.topics.forEach { (name, properties) ->
+            if (properties.enabled) {
+                var handler: Handler
+
+                when (name) {
+                    "transactions" -> handler = bankTransactionHandler
+                    else -> throw CustomException(ErrorCode.FAILED_TO_FIND_TOPIC_HANDLER)
+                }
+                factoryMap[name] = createKafkaListenerContainerFactory(name, handler, properties)
+
+            }
+        }
+        return factoryMap
     }
 
     private fun createKafkaListenerContainerFactory(
