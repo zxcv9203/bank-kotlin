@@ -28,6 +28,8 @@ dependencies {
     implementation("com.fastxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}")
     implementation("org.springframework.kafka:spring-kafka")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    implementation("org.redisson:redisson-spring-boot-starter:3.45.1")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.kafka:spring-kafka-test")
