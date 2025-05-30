@@ -18,7 +18,7 @@ class HistoryMongoRepository(
 ) {
     private val userNameMapper: ConcurrentHashMap<String, String> = ConcurrentHashMap()
 
-    fun findLatestTransactionHistory(ulid: String, limit: Int = 30): List<History> {
+    fun findLatestTransactionHistory(ulid: String): List<History> {
         val criteria = Criteria().orOperator(
             Criteria.where("fromUlid").`is`(ulid),
             Criteria.where("toUlid").`is`(ulid)
@@ -26,6 +26,7 @@ class HistoryMongoRepository(
 
         val query = Query(criteria)
             .with(Sort.by(Sort.Direction.DESC, "createdAt"))
+            .limit(30)
 
         query.fields().exclude("_id")
         val result: List<TransactionHistoryDocument> = getTemplate(MongoTableCollector.Bank)

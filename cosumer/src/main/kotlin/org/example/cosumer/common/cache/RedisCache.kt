@@ -24,6 +24,10 @@ class RedisClient(
         return value?.let { kSerializer(it) }
     }
 
+    fun set(key: String, value: String) {
+        template.opsForValue()[key] = value
+    }
+
     fun setIfNotExists(key: String, value: String): Boolean {
         return template.opsForValue().setIfAbsent(key, value) ?: false
     }

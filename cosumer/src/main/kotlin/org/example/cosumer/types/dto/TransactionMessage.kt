@@ -41,12 +41,12 @@ data class TransactionMessage(
         )
     }
 
-    fun toDto(fromUser: String, toUser: String): History {
+    fun toDto(): History {
         return History(
             fromUlid = fromUlid,
-            fromUser = fromUser,
+            fromUser = fromName,
             toUlid = toUlid,
-            toUser = toUser,
+            toUser = toName,
             amount = amount,
             time = time,
         )
