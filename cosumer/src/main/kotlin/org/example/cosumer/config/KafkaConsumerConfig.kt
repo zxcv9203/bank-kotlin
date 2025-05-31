@@ -14,7 +14,9 @@ import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.listener.AcknowledgingMessageListener
+import org.springframework.kafka.listener.ConcurrentMessageListenerContainer
 import org.springframework.kafka.listener.ContainerProperties
+import org.springframework.kafka.support.serializer.JsonDeserializer
 
 @Configuration
 @EnableKafka
@@ -54,8 +56,8 @@ class KafkaConsumerConfig(
     }
 
     @Bean(name = ["factoryHandlerMapper"])
-    fun factoryHandlerMapper(): Map<String, ConcurrentKafkaListenerContainerFactory<String, Any>> {
-        val factoryMap = HashMap<String, ConcurrentKafkaListenerContainerFactory<String, Any>>()
+    fun factoryHandlerMapper(): Map<String, ConcurrentMessageListenerContainer<String, Any>> {
+        val containerMap = HashMap<String, ConcurrentMessageListenerContainer<String, Any>>()
 
         topicConfig.topics.forEach { (name, properties) ->
             if (properties.enabled) {
@@ -65,38 +67,35 @@ class KafkaConsumerConfig(
                     "transactions" -> handler = bankTransactionHandler
                     else -> throw CustomException(ErrorCode.FAILED_TO_FIND_TOPIC_HANDLER)
                 }
-                factoryMap[name] = createKafkaListenerContainerFactory(name, handler, properties)
+                val factory = createKafkaListenerContainerFactory(properties)
+                val container = factory.createContainer(name)
 
+                container.setupMessageListener(AcknowledgingMessageListener { record, acknowledgment ->
+                    try {
+                        handler.handle(record, acknowledgment)
+                    } catch (e: Exception) {
+                        handler.handleDLQ(record, acknowledgment)
+                    }
+                })
+                containerMap[name] = container
             }
         }
-        return factoryMap
+        return containerMap
     }
 
     private fun createKafkaListenerContainerFactory(
-        topicName: String,
-        handler: Handler,
         properties: TopicProperties,
     ): ConcurrentKafkaListenerContainerFactory<String, Any> {
         val config = consumerConfigs().toMutableMap()
 
         config[ConsumerConfig.MAX_POLL_RECORDS_CONFIG] = properties.maxPollRecords
 
-        val consumerFactory = DefaultKafkaConsumerFactory<String, Any>(config)
         val factory = ConcurrentKafkaListenerContainerFactory<String, Any>()
         factory.consumerFactory = DefaultKafkaConsumerFactory(config)
         factory.containerProperties.ackMode = ContainerProperties.AckMode.MANUAL
-        factory.setAutoStartup(true)
         factory.containerProperties.pollTimeout = properties.pollingInterval
 
-        val container = factory.createContainer(topicName)
 
-        container.setupMessageListener(AcknowledgingMessageListener { record, acknowledgment ->
-            try {
-                handler.handle(record, acknowledgment)
-            } catch (e: Exception) {
-                handler.handleDLQ(record, acknowledgment)
-            }
-        })
         return factory
     }
 }
